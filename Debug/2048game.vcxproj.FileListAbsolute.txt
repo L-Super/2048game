@@ -1,0 +1,2 @@
+D:\C++\2048game\Debug\2048game.exe
+D:\C++\2048game\Debug\2048game.pdb
