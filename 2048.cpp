@@ -131,6 +131,29 @@ void moveUP()
 		int temp = 0;
 		for (int begin = 1; begin < MAX_SIZE; begin++)
 		{
+			
+			if (map[begin][i] != 0)
+				if (map[temp][i] == 0)
+				{
+					map[temp][i] = map[begin][i];
+					map[begin][i] = 0;
+				}
+				else if (map[temp][i] == map[begin][i])
+				{
+					map[temp][i] += map[begin][i];
+					map[begin][i] = 0;
+					temp++;
+				}
+				else
+				{
+					map[temp + 1][i] = map[begin][i];
+					if (temp + 1 != begin)
+					{
+						map[begin][i] = 0;
+					}
+
+					temp++;
+				}
 
 		}
 	}
@@ -195,7 +218,7 @@ int main()
 	while (1)
 	{
 		gameDraw();
-		moveUP();
+		keyDeal();
 	}
 	//system("pause");
 	closegraph();//close
