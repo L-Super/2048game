@@ -29,7 +29,7 @@ enum Color//枚举格子颜色
 Color arr[13] = { zero,twoTo1,twoTo2,twoTo3,twoTo4,twoTo5,twoTo6,twoTo7,twoTo8,twoTo9,twoTo10,twoTo11,back };
 
 //定义数组，存储数据,全局变量自动初始化为0
-int map[MAX_SIZE][MAX_SIZE] = {4,8,16,32};
+int map[MAX_SIZE][MAX_SIZE];
 
 //随机产生一个整数2或4，2概率比4大
 int createNum()
@@ -135,17 +135,21 @@ void moveUP()
 			if (map[begin][i] != 0)
 				if (map[temp][i] == 0)
 				{
+					//(0,0)等于0,把（0，i)赋值过去
 					map[temp][i] = map[begin][i];
 					map[begin][i] = 0;
 				}
 				else if (map[temp][i] == map[begin][i])
 				{
+					//(0,0)等于（0，i),相加
 					map[temp][i] += map[begin][i];
 					map[begin][i] = 0;
+					//只移动一次
 					temp++;
 				}
 				else
 				{
+					//（0，0）不等（0，i),上移(0,i)，并清零
 					map[temp + 1][i] = map[begin][i];
 					if (temp + 1 != begin)
 					{
@@ -160,14 +164,98 @@ void moveUP()
 }
 void moveDown()
 {
+	for (int i = 0; i < MAX_SIZE; i++)
+	{
+		int temp = 3;
+		for (int begin = 0; begin < MAX_SIZE-1; begin++)
+		{
 
+			if (map[begin][i] != 0)
+				if (map[temp][i] == 0)
+				{
+					map[temp][i] = map[begin][i];
+					map[begin][i] = 0;
+				}
+				else if (map[temp][i] == map[begin][i])
+				{
+					map[temp][i] += map[begin][i];
+					map[begin][i] = 0;
+					temp--;
+				}
+				else
+				{
+					map[temp - 1][i] = map[begin][i];
+					if (temp - 1 != begin)
+					{
+						map[begin][i] = 0;
+					}
+					temp--;
+				}
+
+		}
+	}
 }
 void moveRight()
 {
-
+	for (int i = 0; i < MAX_SIZE; i++)
+	{
+		int temp = 3;
+		for (int begin = 0; begin < MAX_SIZE - 1; begin++)
+		{
+			if (map[i][begin] != 0)
+			{
+				if (map[i][temp] == 0)
+				{
+					map[i][temp] = map[i][begin];
+					map[i][begin] = 0;
+				}
+				else if (map[i][temp] == map[i][begin])
+				{
+					map[i][temp] += map[i][begin];
+					map[i][begin] = 0;
+					temp--;
+				}
+				else
+				{
+					map[i][temp - 1] = map[i][begin];
+					if (temp - 1 != begin)
+						map[i][begin] = 0;
+					temp--;
+				}
+			}
+		}
+	}
 }
 void moveLeft()
 {
+	for (int i = 0; i < MAX_SIZE; i++)
+	{
+		int temp = 0;
+		for (int begin = 1; begin < MAX_SIZE; begin++)
+		{
+			if (map[i][begin] != 0)
+			{
+				if (map[i][temp] == 0)
+				{
+					map[i][temp] = map[i][begin];
+					map[i][begin] = 0;
+				}
+				else if (map[i][temp] == map[i][begin])
+				{
+					map[i][temp] += map[i][begin];
+					map[i][begin] = 0;
+					temp++;
+				}
+				else
+				{
+					map[i][temp + 1] = map[i][begin];
+					if (temp + 1 != begin)
+						map[i][begin] = 0;
+					temp++;
+				}
+			}
+		}
+	}
 
 }
 //按键处理
@@ -185,14 +273,17 @@ void keyDeal()
 	case 's':
 	case 'S':
 	case 80:
+		moveDown();
 		break;
 	case 'a':
 	case 'A':
-	case 74:
+	case 75:
+		moveLeft();
 		break;
 	case 'd':
 	case 'D':
 	case 77:
+		moveRight();
 		break;
 
 	default:
@@ -205,7 +296,7 @@ int main()
 {
 	//create windows
 	initgraph(WIN_SIZE,WIN_SIZE,SHOWCONSOLE);
-	gameInit();
+	
 	
 	/*while (1)
 	{
@@ -217,6 +308,7 @@ int main()
 	
 	while (1)
 	{
+		gameInit();
 		gameDraw();
 		keyDeal();
 	}
