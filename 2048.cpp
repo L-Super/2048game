@@ -68,6 +68,18 @@ void gameDraw()
 	setbkcolor(RGB(187,173,160));
 	//清除绘图设备
 	cleardevice();
+	//设置标题
+	//获取窗口句柄
+	HWND hnd = GetHWnd();
+	//设置窗口标题
+	SetWindowText(hnd, "2048");
+	/*
+	//弹出窗口，提示用户操作
+	MessageBox(NULL, "恭喜，你成功中奖500w", "提示", MB_OKCANCEL);
+	MessageBox(hnd, "恭喜，你成功中奖500w", "提示", MB_OKCANCEL);
+	*/
+
+
 	//绘制矩形
 	/*
 	rectangle(20,20,80,80);//空心矩形
@@ -295,8 +307,9 @@ void keyDeal()
 int main()
 {
 	//create windows
-	initgraph(WIN_SIZE,WIN_SIZE,SHOWCONSOLE);
-	
+	initgraph(WIN_SIZE,WIN_SIZE/*,SHOWCONSOLE*/);
+
+	gameInit();
 	
 	/*while (1)
 	{
