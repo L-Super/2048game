@@ -1,2 +1,3 @@
 ﻿  2048.cpp
+D:\C++\2048game\2048.cpp(40,6): warning C4101: “n”: 未引用的局部变量
   2048game.vcxproj -> D:\C++\2048game\Debug\2048game.exe

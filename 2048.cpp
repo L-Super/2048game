@@ -32,28 +32,65 @@ Color arr[13] = { zero,twoTo1,twoTo2,twoTo3,twoTo4,twoTo5,twoTo6,twoTo7,twoTo8,t
 int map[MAX_SIZE][MAX_SIZE];
 
 //随机产生一个整数2或4，2概率比4大
-int createNum()
+void createNum()
 {
-	//随机数 rand() 加上头文件
-	srand((unsigned)time(NULL)+clock());
-	printf("%d",rand());
-	if (rand() % 6 == 0)
-		return 4;
-	else
-		return 2;
-	//return 0;
+	srand((unsigned)time(NULL) + clock());//随机种子
+	int i;
+	int j;
+	int n;
+	int m = rand() % 3;//m可能的结果为0、1、2。
+/*//获取空位置数量 
+	for (i = 0; i < 4; ++i)
+	{
+		for (j = 0; j < 4; ++j)
+		{
+			map[i][j] == 0 ? ++n : 1;
+		}
+	}
+	int n = rand() % n; // 确定在何处空位置生成随机数
+*/
+	
+
+
+	while (1)
+	{
+		i = rand() % 4;
+		j = rand() % 4;
+		if (map[i][j] == 0)
+		{
+			map[i][j] = (m > 1) ? 2 : 4;//m大于1为2，否则为4。这样2的概率为33.3%,4的概率为66.7%
+			break;//生成一个数，则退出
+		}
+		else
+		{
+			continue;//否则执行下一次循环，重新生成随机值。
+		}
+	}
+
 }
+
 
 //初始化数据
 void gameInit()
 {
+	//随机数 rand() 加上头文件
+	srand((unsigned)time(NULL) + clock());
+	printf("%d", rand());
+	/*if (rand() % 6 == 0)
+		return 4;
+	else
+		return 2;*/
+		//新方式生成随机数
+	int m = rand() % 6;
+
 	for(int i=0;i<2;/*i++*/)
 	{
+		//rand()%max_size表示生成随机数除4取余，余数只有0，1，2，3，即矩阵四行四列
 		int r = rand() % MAX_SIZE;
 		int c = rand() % MAX_SIZE;
 		if (map[r][c] == 0)
 		{
-			map[r][c] = createNum();
+			map[r][c] = (m > 1) ? 2 : 4;//m大于1为2，否则为4。这样2的概率为66.7%%,4的概率为33.3%
 			i++;
 		}
 		
@@ -150,6 +187,7 @@ void moveUP()
 					//(0,0)等于0,把（0，i)赋值过去
 					map[temp][i] = map[begin][i];
 					map[begin][i] = 0;
+					temp++;
 				}
 				else if (map[temp][i] == map[begin][i])
 				{
@@ -179,7 +217,7 @@ void moveDown()
 	for (int i = 0; i < MAX_SIZE; i++)
 	{
 		int temp = 3;
-		for (int begin = 0; begin < MAX_SIZE-1; begin++)
+		for (int begin = 2; begin >=0; begin--)
 		{
 
 			if (map[begin][i] != 0)
@@ -187,6 +225,7 @@ void moveDown()
 				{
 					map[temp][i] = map[begin][i];
 					map[begin][i] = 0;
+					temp--;
 				}
 				else if (map[temp][i] == map[begin][i])
 				{
@@ -212,7 +251,7 @@ void moveRight()
 	for (int i = 0; i < MAX_SIZE; i++)
 	{
 		int temp = 3;
-		for (int begin = 0; begin < MAX_SIZE - 1; begin++)
+		for (int begin = 2; begin >=0 ; begin--)
 		{
 			if (map[i][begin] != 0)
 			{
@@ -220,6 +259,7 @@ void moveRight()
 				{
 					map[i][temp] = map[i][begin];
 					map[i][begin] = 0;
+					temp--;
 				}
 				else if (map[i][temp] == map[i][begin])
 				{
@@ -251,6 +291,7 @@ void moveLeft()
 				{
 					map[i][temp] = map[i][begin];
 					map[i][begin] = 0;
+					temp++;
 				}
 				else if (map[i][temp] == map[i][begin])
 				{
@@ -303,6 +344,54 @@ void keyDeal()
 	}
 }
 
+//判断游戏是否结束
+bool GameOver()
+{
+	
+	//相邻（上下，左右）的值不相等，则游戏结束，return 1
+	
+	int n = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j + 1 < 4; j++)
+		{
+			if ((map[i][j] == map[i][j + 1]) || (map[j][i] == map[j + 1][i]))
+			{
+				n++;
+			}
+		}
+	}
+	//if (n == 0)//表示没有相等,结束
+	//{
+	//	return 1;
+	//}
+	//else
+	//{
+	//	return 0;
+	//}
+	//游戏结束条件1：没有格子为0，游戏结束，return 1
+	//int m = 0;
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	for (int j = 0; j < 4; j++)
+	//	{
+	//		if (map[i][j] == 0)
+	//		{
+	//			m++;//有格子为零，游戏继续
+	//		}
+	//	}
+	//}
+	if ( n )
+	{
+		//fasle表示游戏结束
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+
+}
 
 int main()
 {
@@ -321,9 +410,20 @@ int main()
 	
 	while (1)
 	{
-		gameInit();
+		//gameInit();
+		createNum();
 		gameDraw();
 		keyDeal();
+		
+		if (GameOver())
+		{
+			HWND h = GetHWnd();
+			MessageBox(h, "游戏结束!", "提示", MB_OKCANCEL);
+			//printf(" ***游戏结束***\n点击回车键退出程序");
+			//getchar();
+			break;
+		}
+
 	}
 	//system("pause");
 	closegraph();//close
